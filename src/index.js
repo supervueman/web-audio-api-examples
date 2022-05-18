@@ -3,8 +3,6 @@ window.addEventListener('load', () => {
   let bufferLoader;
 
   function init() {
-    // Fix up prefixing
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
 
     bufferLoader = new BufferLoader(
@@ -19,12 +17,11 @@ window.addEventListener('load', () => {
   }
 
   function finishedLoading(bufferList) {
-    // Create two sources and play them both together.
-    const source1 = context.createBufferSource();
-    source1.buffer = bufferList[0];
+    const source = context.createBufferSource();
+    source.buffer = bufferList[0];
 
-    source1.connect(context.destination);
-    source1.start(0);
+    source.connect(context.destination);
+    source.start(0);
   }
 
   document.querySelector('.btn-init').addEventListener('click', () => {

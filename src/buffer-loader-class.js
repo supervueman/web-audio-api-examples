@@ -24,16 +24,18 @@ class BufferLoader {
 
     const loader = this;
 
-    request.onload = function () {
+    request.onload = function() {
       loader.context.decodeAudioData(
         request.response,
-        function (buffer) {
+        function(buffer) {
           if (!buffer) {
             alert('error decoding file data: ' + url);
             return;
           }
+
           loader.bufferList[index] = buffer;
-          if (++loader.loadCount == loader.urlList.length) {
+
+          if (++loader.loadCount === loader.urlList.length) {
             loader.onload(loader.bufferList);
           }
         },
