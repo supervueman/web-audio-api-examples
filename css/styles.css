@@ -7,6 +7,7 @@
 body {
     font-size: 14px;
     font-family: sans-serif;
+    background-color: #01010f;
 }
 
 nav {
@@ -35,9 +36,9 @@ header {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 40px 20px;
 }
 
 .card {
@@ -51,4 +52,33 @@ header {
 .card-title {
     font-size: 1.2rem;
     text-transform: capitalize;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: 1px solid #09bd39;
+    color: #09bd39;
+    background-color: #01010f;
+    border-radius: 2px;
+}
+
+.effect {
+    width: 100%;
+    border-bottom: 1px solid rgb(196, 191, 191);
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+}
+
+.effect--title {
+    color: #09bd39;
+    margin-right: 10px;
+    min-width: 80px;
+}
+
+.effect--value {
+    color: #09bd39;
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 10px;
 }
