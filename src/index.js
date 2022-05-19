@@ -7,7 +7,7 @@ window.addEventListener('load', () => {
   function init() {
     context = new AudioContext();
     gain = context.createGain()
-    delay = context.createDelay(1)
+    delay = context.createDelay()
     console.log(gain)
 
     bufferLoader = new BufferLoader(
@@ -23,15 +23,14 @@ window.addEventListener('load', () => {
 
   function finishedLoading(bufferList) {
     const source = context.createBufferSource();
-    source.connect(gain)
     source.connect(delay)
+    delay.connect(gain)
     delay.connect(context.destination)
-    gain.connect(context.destination)
-    gain.gain.setValueAtTime(0, context.currentTime)
 
-    console.log(context.destination)
+    source.connect(gain)
+    gain.connect(context.destination)
+
     source.buffer = bufferList[0];
-    console.log(bufferList)
 
     source.connect(context.destination);
     source.start(0);
