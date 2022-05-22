@@ -3,6 +3,7 @@ window.addEventListener('load', () => {
   let bufferLoader;
   let gain;
   let delay;
+  let source;
 
   function init() {
     context = new AudioContext();
@@ -22,7 +23,7 @@ window.addEventListener('load', () => {
   }
 
   function finishedLoading(bufferList) {
-    const source = context.createBufferSource();
+    source = context.createBufferSource();
     source.connect(delay)
     delay.connect(gain)
     delay.connect(context.destination)
@@ -36,7 +37,11 @@ window.addEventListener('load', () => {
     source.start(0);
   }
 
-  document.querySelector('.btn-init').addEventListener('click', () => {
+  function stop() {
+    source.stop()
+  }
+
+  document.querySelector('.btn-play').addEventListener('click', () => {
     init()
   })
 
@@ -50,5 +55,9 @@ window.addEventListener('load', () => {
     const value = e.target.value / 100
     delay.delayTime.setValueAtTime(value, context.currentTime)
     document.querySelector('.effect--delay').querySelector('.effect--value').innerText = value
+  })
+
+  document.querySelector('.btn-stop').addEventListener('click', () => {
+    stop()
   })
 })
