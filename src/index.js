@@ -4,11 +4,14 @@ window.addEventListener('load', () => {
   let gain;
   let delay;
   let source;
+  const pannerOptions = { pan: 0 };
+  let panner;
 
   function init() {
     context = new AudioContext();
     gain = context.createGain()
     delay = context.createDelay()
+    panner = new StereoPannerNode(context, pannerOptions)
     console.log(gain)
 
     bufferLoader = new BufferLoader(
@@ -24,16 +27,10 @@ window.addEventListener('load', () => {
 
   function finishedLoading(bufferList) {
     source = context.createBufferSource();
-    source.connect(delay)
-    delay.connect(gain)
-    delay.connect(context.destination)
-
-    source.connect(gain)
-    gain.connect(context.destination)
-
     source.buffer = bufferList[0];
 
-    source.connect(context.destination);
+    source.connect(delay).connect(panner).connect(gain).connect(context.destination)
+
     source.start(0);
   }
 
@@ -46,15 +43,21 @@ window.addEventListener('load', () => {
   })
 
   document.querySelector('.effect--control-gain').addEventListener('input', (e) => {
-    const value = e.target.value / 10 - 1
+    const value = e.target.value
     gain.gain.setValueAtTime(value, context.currentTime)
     document.querySelector('.effect--gain').querySelector('.effect--value').innerText = value
   })
 
   document.querySelector('.effect--control-delay').addEventListener('input', (e) => {
-    const value = e.target.value / 100
+    const value = e.target.value
     delay.delayTime.setValueAtTime(value, context.currentTime)
     document.querySelector('.effect--delay').querySelector('.effect--value').innerText = value
+  })
+
+  document.querySelector('.effect--control-panner').addEventListener('input', (e) => {
+    const value = e.target.value
+    panner.pan.setValueAtTime(value, context.currentTime)
+    document.querySelector('.effect--panner').querySelector('.effect--value').innerText = value
   })
 
   document.querySelector('.btn-stop').addEventListener('click', () => {
