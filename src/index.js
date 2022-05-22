@@ -23,6 +23,7 @@ window.addEventListener('load', () => {
     gain = context.createGain()
     delay = context.createDelay()
     panner = new StereoPannerNode(context, pannerOptions)
+
     biquadFilterHighPass = new BiquadFilterNode(context, {
       type: 'highpass',
       Q: 0.5,
@@ -59,10 +60,14 @@ window.addEventListener('load', () => {
     console.log(source.playbackRate)
     source.buffer = bufferList[0];
 
-    source.connect(delay).connect(panner).connect(gain).connect(biquadFilterLowPass).connect(biquadFilterHighPass).connect(context.destination)
+    source
+      .connect(delay)
+      .connect(panner)
+      .connect(gain)
+      .connect(biquadFilterLowPass)
+      .connect(biquadFilterHighPass)
+      .connect(context.destination)
     source.start(0, currentTime);
-
-    console.log(context.currentTime)
   }
 
   function stop() {
