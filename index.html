@@ -35,6 +35,53 @@
         <input class="effect--control effect--control-panner" type="range" min="-1" max="1" step="0.01">
         <div class="effect--value">0</div>
       </div>
+
+      <div class="effect effect--bqfilter">
+        <h3 class="effect--title">BQ FILTER:</h3>
+        <div>
+          <div class="effect--sub effect--bqfilter-lowpass mb-4">
+            <h3 class="effect--title mb-2">LOWPASS</h3>
+            <div class="effect--control-container effect--control-container-bqfilter-frequency d-flex mb-2">
+              <h3 class="effect--title">frequency:</h3>
+              <input class="effect--control effect--control-bqfilter-frequency" type="range" min="0" max="20000" step="1">
+              <div class="effect--value">0</div>
+            </div>
+
+            <div class="effect--control-container effect--control-container-bqfilter-q d-flex mb-2">
+              <h3 class="effect--title">Q:</h3>
+              <input class="effect--control effect--control-bqfilter-q" type="range" min="0.0001" max="1000" step="0.0001">
+              <div class="effect--value">0</div>
+            </div>
+
+            <div class="effect--control-container effect--control-container-bqfilter-gain d-flex">
+              <h3 class="effect--title">gain:</h3>
+              <input class="effect--control effect--control-bqfilter-gain" type="range" min="-40" max="40" step="1">
+              <div class="effect--value">0</div>
+            </div>
+          </div>
+
+          <div class="effect--sub effect--bqfilter-highpass">
+            <h3 class="effect--title mb-2">HIGHPASS</h3>
+            <div class="effect--control-container effect--control-container-bqfilter-frequency d-flex mb-2">
+              <h3 class="effect--title">frequency:</h3>
+              <input class="effect--control effect--control-bqfilter-frequency" type="range" min="0" max="20000" step="1">
+              <div class="effect--value">0</div>
+            </div>
+
+            <div class="effect--control-container effect--control-container-bqfilter-q d-flex mb-2">
+              <h3 class="effect--title">Q:</h3>
+              <input class="effect--control effect--control-bqfilter-q" type="range" min="0.0001" max="1000" step="0.0001">
+              <div class="effect--value">0</div>
+            </div>
+
+            <div class="effect--control-container effect--control-container-bqfilter-gain d-flex">
+              <h3 class="effect--title">gain:</h3>
+              <input class="effect--control effect--control-bqfilter-gain" type="range" min="-40" max="40" step="1">
+              <div class="effect--value">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="./src/buffer-loader-class.js"></script>

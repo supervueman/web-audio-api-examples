@@ -11,6 +11,11 @@ window.addEventListener('load', () => {
   let biquadFilterHighPass;
   let biquadFilterLowPass;
 
+  const bqFiltersEnum = {
+    lowpass: biquadFilterLowPass,
+    highpass: biquadFilterHighPass
+  }
+
   function init() {
     if (!context) {
       context = new AudioContext();
@@ -21,16 +26,18 @@ window.addEventListener('load', () => {
     biquadFilterHighPass = new BiquadFilterNode(context, {
       type: 'highpass',
       Q: 0.5,
-      frequency: 3000,
+      frequency: 350,
       gain: 1,
     })
+    bqFiltersEnum.highpass = biquadFilterHighPass
+
     biquadFilterLowPass = new BiquadFilterNode(context, {
       type: 'lowpass',
       Q: 0.5,
-      frequency: 1000,
+      frequency: 300,
       gain: 1,
     })
-    console.log(gain)
+    bqFiltersEnum.lowpass = biquadFilterLowPass
 
     bufferLoader = new BufferLoader(
       context,
@@ -52,7 +59,7 @@ window.addEventListener('load', () => {
     console.log(source.playbackRate)
     source.buffer = bufferList[0];
 
-    source.connect(delay).connect(panner).connect(gain).connect(biquadFilterHighPass).connect(biquadFilterLowPass).connect(context.destination)
+    source.connect(delay).connect(panner).connect(gain).connect(biquadFilterLowPass).connect(biquadFilterHighPass).connect(context.destination)
     source.start(0, currentTime);
 
     console.log(context.currentTime)
@@ -97,4 +104,43 @@ window.addEventListener('load', () => {
   $('.btn-stop').addEventListener('click', () => {
     stop()
   })
+
+  function bgFilterChange(type) {
+    const bgfilterDomEl = $('.effect--bqfilter')
+
+    const filter = bgfilterDomEl.querySelector(`.effect--bqfilter-${type}`)
+
+    const controlContainerFrequency = filter.querySelector('.effect--control-container-bqfilter-frequency')
+    const controlContainerQ = filter.querySelector('.effect--control-container-bqfilter-q')
+    const controlContainerGain = filter.querySelector('.effect--control-container-bqfilter-gain')
+
+    const inputFrequency = controlContainerFrequency.querySelector('.effect--control')
+    const inputQ = controlContainerQ.querySelector('.effect--control')
+    const inputGain = controlContainerGain.querySelector('.effect--control')
+
+    const valueDomFrequency = controlContainerFrequency.querySelector('.effect--value')
+    const valueDomQ = controlContainerQ.querySelector('.effect--value')
+    const valueDomGain = controlContainerGain.querySelector('.effect--value')
+
+    inputFrequency.addEventListener('input', (e) => {
+      const value = e.target.value
+      bqFiltersEnum[type].frequency.setValueAtTime(value, context.currentTime)
+      valueDomFrequency.innerText = value
+    })
+
+    inputQ.addEventListener('input', (e) => {
+      const value = e.target.value
+      bqFiltersEnum[type].Q.setValueAtTime(value, context.currentTime)
+      valueDomQ.innerText = value
+    })
+
+    inputGain.addEventListener('input', (e) => {
+      const value = e.target.value
+      bqFiltersEnum[type].gain.setValueAtTime(value, context.currentTime)
+      valueDomGain.innerText = value
+    })
+  }
+
+  bgFilterChange('lowpass')
+  bgFilterChange('highpass')
 })

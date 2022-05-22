@@ -77,7 +77,7 @@ header {
 .effect--title {
     color: #09bd39;
     margin-right: 10px;
-    min-width: 80px;
+    min-width: 100px;
 }
 
 .effect--value {
@@ -87,6 +87,18 @@ header {
     margin-left: 10px;
 }
 
+.effect--sub {
+    margin-bottom: 10px;
+}
+
 .d-flex {
     display: flex;
+}
+
+.mb-2 {
+    margin-bottom: 10px;
+}
+
+.mb-4 {
+    margin-bottom: 20px;
 }
