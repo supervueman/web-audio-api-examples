@@ -8,6 +8,8 @@ window.addEventListener('load', () => {
   const pannerOptions = { pan: 0 };
   let panner;
   let currentTime = 0
+  let biquadFilterHighPass;
+  let biquadFilterLowPass;
 
   function init() {
     if (!context) {
@@ -16,6 +18,18 @@ window.addEventListener('load', () => {
     gain = context.createGain()
     delay = context.createDelay()
     panner = new StereoPannerNode(context, pannerOptions)
+    biquadFilterHighPass = new BiquadFilterNode(context, {
+      type: 'highpass',
+      Q: 0.5,
+      frequency: 3000,
+      gain: 1,
+    })
+    biquadFilterLowPass = new BiquadFilterNode(context, {
+      type: 'lowpass',
+      Q: 0.5,
+      frequency: 1000,
+      gain: 1,
+    })
     console.log(gain)
 
     bufferLoader = new BufferLoader(
@@ -35,9 +49,10 @@ window.addEventListener('load', () => {
     }
 
     source = context.createBufferSource();
+    console.log(source.playbackRate)
     source.buffer = bufferList[0];
 
-    source.connect(delay).connect(panner).connect(gain).connect(context.destination)
+    source.connect(delay).connect(panner).connect(gain).connect(biquadFilterHighPass).connect(biquadFilterLowPass).connect(context.destination)
     source.start(0, currentTime);
 
     console.log(context.currentTime)
@@ -52,30 +67,34 @@ window.addEventListener('load', () => {
     source.stop()
   }
 
-  document.querySelector('.btn-play').addEventListener('click', () => {
+  const $ = (attr) => {
+    return document.querySelector(attr)
+  }
+
+  $('.effect--control-gain').addEventListener('input', (e) => {
+    const value = e.target.value
+    gain.gain.setValueAtTime(value, context.currentTime)
+    $('.effect--gain').querySelector('.effect--value').innerText = value
+  })
+
+  $('.effect--control-delay').addEventListener('input', (e) => {
+    const value = e.target.value
+    delay.delayTime.setValueAtTime(value, context.currentTime)
+    $('.effect--delay').querySelector('.effect--value').innerText = value
+  })
+
+  $('.effect--control-panner').addEventListener('input', (e) => {
+    const value = e.target.value
+    panner.pan.setValueAtTime(value, context.currentTime)
+    $('.effect--panner').querySelector('.effect--value').innerText = value
+  })
+
+  $('.btn-play').addEventListener('click', () => {
     isPlay = true
     init()
   })
 
-  document.querySelector('.effect--control-gain').addEventListener('input', (e) => {
-    const value = e.target.value
-    gain.gain.setValueAtTime(value, context.currentTime)
-    document.querySelector('.effect--gain').querySelector('.effect--value').innerText = value
-  })
-
-  document.querySelector('.effect--control-delay').addEventListener('input', (e) => {
-    const value = e.target.value
-    delay.delayTime.setValueAtTime(value, context.currentTime)
-    document.querySelector('.effect--delay').querySelector('.effect--value').innerText = value
-  })
-
-  document.querySelector('.effect--control-panner').addEventListener('input', (e) => {
-    const value = e.target.value
-    panner.pan.setValueAtTime(value, context.currentTime)
-    document.querySelector('.effect--panner').querySelector('.effect--value').innerText = value
-  })
-
-  document.querySelector('.btn-stop').addEventListener('click', () => {
+  $('.btn-stop').addEventListener('click', () => {
     stop()
   })
 })
