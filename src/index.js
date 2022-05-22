@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+  let isPlay = false
   let context;
   let bufferLoader;
   let gain;
@@ -6,9 +7,12 @@ window.addEventListener('load', () => {
   let source;
   const pannerOptions = { pan: 0 };
   let panner;
+  let currentTime = 0
 
   function init() {
-    context = new AudioContext();
+    if (!context) {
+      context = new AudioContext();
+    }
     gain = context.createGain()
     delay = context.createDelay()
     panner = new StereoPannerNode(context, pannerOptions)
@@ -19,26 +23,37 @@ window.addEventListener('load', () => {
       [
         '../assets/Track_1.mp3',
       ],
-      finishedLoading
+      createBuffer
     );
 
     bufferLoader.load();
   }
 
-  function finishedLoading(bufferList) {
+  function createBuffer(bufferList) {
+    if (isPlay) {
+      context.resume()
+    }
+
     source = context.createBufferSource();
     source.buffer = bufferList[0];
 
     source.connect(delay).connect(panner).connect(gain).connect(context.destination)
+    source.start(0, currentTime);
 
-    source.start(0);
+    console.log(context.currentTime)
   }
 
   function stop() {
+    isPlay = false
+    console.log(context.state)
+    context.suspend()
+    currentTime = context.currentTime
+    console.log(currentTime)
     source.stop()
   }
 
   document.querySelector('.btn-play').addEventListener('click', () => {
+    isPlay = true
     init()
   })
 
