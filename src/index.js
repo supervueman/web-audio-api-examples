@@ -10,6 +10,8 @@ window.addEventListener('load', () => {
   let currentTime = 0
   let biquadFilterHighPass;
   let biquadFilterLowPass;
+  let analyser;
+  let dataArray;
 
   const bqFiltersEnum = {
     lowpass: biquadFilterLowPass,
@@ -18,8 +20,14 @@ window.addEventListener('load', () => {
 
   function init() {
     if (!context) {
-      context = new AudioContext();
+      context = new AudioContext()
     }
+
+    analyser = context.createAnalyser()
+    analyser.fftSize = 256
+    const bufferLength = analyser.frequencyBinCount;
+    dataArray = new Float32Array(bufferLength);
+
     gain = context.createGain()
     delay = context.createDelay()
     panner = new StereoPannerNode(context, pannerOptions)
@@ -54,6 +62,7 @@ window.addEventListener('load', () => {
   function createBuffer(bufferList) {
     if (isPlay) {
       context.resume()
+      draw()
     }
 
     source = context.createBufferSource();
@@ -66,6 +75,7 @@ window.addEventListener('load', () => {
       .connect(gain)
       .connect(biquadFilterLowPass)
       .connect(biquadFilterHighPass)
+      .connect(analyser)
       .connect(context.destination)
     source.start(0, currentTime);
   }
@@ -148,4 +158,12 @@ window.addEventListener('load', () => {
 
   bgFilterChange('lowpass')
   bgFilterChange('highpass')
+
+  function draw() {
+    requestAnimationFrame(draw)
+
+    analyser.getFloatFrequencyData(dataArray)
+
+    console.log(dataArray)
+  }
 })
