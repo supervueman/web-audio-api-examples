@@ -19,6 +19,20 @@ window.addEventListener('load', () => {
     getAudioStream()
   })
 
+  function makeDistortionCurve(amount) {
+    var k = typeof amount === 'number' ? amount : 50,
+      n_samples = 44100,
+      curve = new Float32Array(n_samples),
+      deg = Math.PI / 180,
+      i = 0,
+      x;
+    for ( ; i < n_samples; ++i ) {
+      x = i * 2 / n_samples - 1;
+      curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+    }
+    return curve;
+  };
+
   async function getAudioStream() {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -38,21 +52,25 @@ window.addEventListener('load', () => {
     })
 
     delay = context.createDelay()
-    distortion = audioCtx.createWaveShaper()
+
+    distortion = context.createWaveShaper()
+    distortion.curve = makeDistortionCurve(400);
+    distortion.oversample = '4x';
+
     panner = new StereoPannerNode(context, pannerOptions)
 
     biquadFilterHighPass = new BiquadFilterNode(context, {
       type: 'highpass',
-      Q: 0.5,
-      frequency: 350,
+      Q: 1,
+      frequency: 0,
       gain: 1,
     })
     bqFiltersEnum.highpass = biquadFilterHighPass
 
     biquadFilterLowPass = new BiquadFilterNode(context, {
       type: 'lowpass',
-      Q: 0.5,
-      frequency: 300,
+      Q: 1,
+      frequency: 20000,
       gain: 1,
     })
     bqFiltersEnum.lowpass = biquadFilterLowPass
@@ -63,6 +81,7 @@ window.addEventListener('load', () => {
       .connect(gain)
       .connect(biquadFilterLowPass)
       .connect(biquadFilterHighPass)
+      .connect(distortion)
       .connect(context.destination);
 
     $('.effect--control-gain').addEventListener('input', (e) => {
