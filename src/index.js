@@ -89,10 +89,6 @@ window.addEventListener('load', () => {
     source.stop()
   }
 
-  const $ = (attr) => {
-    return document.querySelector(attr)
-  }
-
   $('.effect--control-gain').addEventListener('input', (e) => {
     const value = e.target.value
     gain.gain.setValueAtTime(value, context.currentTime)
