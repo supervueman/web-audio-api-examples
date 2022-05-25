@@ -43,7 +43,7 @@ window.addEventListener('load', () => {
       }
     });
 
-    const lineInSource = context.createMediaStreamSource(stream);
+    const lineInSource = context.createMediaStreamSource(stream)
 
     console.log(lineInSource)
 
@@ -54,8 +54,8 @@ window.addEventListener('load', () => {
     delay = context.createDelay()
 
     distortion = context.createWaveShaper()
-    distortion.curve = makeDistortionCurve(400);
-    distortion.oversample = '4x';
+    distortion.curve = makeDistortionCurve(600)
+    distortion.oversample = '4x'
 
     panner = new StereoPannerNode(context, pannerOptions)
 
@@ -75,7 +75,12 @@ window.addEventListener('load', () => {
     })
     bqFiltersEnum.lowpass = biquadFilterLowPass
 
+    splitter = context.createChannelSplitter();
+    merger = context.createChannelMerger();
+
     lineInSource
+      .connect(splitter)
+      .connect(merger)
       .connect(delay)
       .connect(panner)
       .connect(gain)
@@ -83,6 +88,9 @@ window.addEventListener('load', () => {
       .connect(biquadFilterHighPass)
       .connect(distortion)
       .connect(context.destination);
+
+    splitter.connect(merger, 0, 0)
+    splitter.connect(merger, 0, 1)
 
     $('.effect--control-gain').addEventListener('input', (e) => {
       const value = e.target.value
